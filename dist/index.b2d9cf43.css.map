@@ -1,1 +1,0 @@
-{"mappings":"AAAA;;;;AAIA","sources":["src/style.scss"],"sourcesContent":["* {\n    box-sizing: border-box;\n}\n\nbody {\n    font-family: 'Ubuntu', system-ui, sans-serif;\n}\n"],"names":[],"version":3,"file":"index.b2d9cf43.css.map","sourceRoot":"/__parcel_source_root/"}
