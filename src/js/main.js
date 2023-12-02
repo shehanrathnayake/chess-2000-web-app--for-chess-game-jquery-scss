@@ -4,19 +4,6 @@ import * as pieces from './pieces.js'
 let pieceArray;
 
 function reset() {
-    console.log("yes")
-    /*
-    let initialState = [
-        ['265C','265E', '265D', '265B', '265A', '265D', '265E', '265C'],
-        ['265F','265F', '265F', '265F', '265F', '265F', '265F', '265F'],
-        [ , , , , , , ,],
-        [ , , , , , , ,],
-        [ , , , , , , ,],
-        [ , , , , , , ,],
-        ['2659','2659', '2659', '2659', '2659', '2659', '2659', '2659'],
-        ['2656','2658', '2657', '2655', '2654', '2657', '2658', '2656']
-    ];
-    */
 
     // Creating black pieces
     let blackKing = new pieces.BlackKing([0,4]);
@@ -58,9 +45,9 @@ function reset() {
 
     let initialState = [
         [blackRook1, blackKnight1, blackBishop1, blackQueen, blackKing, blackBishop2, blackKnight2, blackRook2],
-        [blackPawn1, blackPawn2, blackPawn3, blackPawn4, , blackPawn6, blackPawn7, blackPawn8],
+        [blackPawn1, blackPawn2, blackPawn3, blackPawn4, blackPawn5, blackPawn6, blackPawn7, blackPawn8],
         [ , , , , , , ,],
-        [ , , blackPawn5, , , , ,],
+        [ , , , , , , ,],
         [ , , , , , , ,],
         [ , , , , , , ,],
         [whitePawn1, whitePawn2, whitePawn3, whitePawn4, whitePawn5, whitePawn6, whitePawn7, whitePawn8],
@@ -98,8 +85,130 @@ $('body').on('click', (e)=>{
     
 });
 
+function getMovements(piece) {
+    let movements = piece.movement();
+
+    let row = piece.coordinates[0];
+    let col = piece.coordinates[1];
+
+    let barrier = false;
+    for(let i=1; i<8; i++) {
+        if (row+i > 7 || col+i > 7) break;
+
+        if (!barrier && pieceArray[row+i][col+i] != undefined) {
+            barrier = true;
+        }
+            
+        if (barrier) {
+            let removingIndex = movements.findIndex(item => (item[0] === row+i && item[1] === col+i));
+            if (removingIndex != -1) movements.splice(removingIndex, 1);
+        } 
+    }
+
+    /* Cross movements row+i col-i */
+    barrier = false;
+    for(i=1; (row+i<8 && col-i>=0); i++) {
+        if (!barrier && pieceArray[row+i][col-i] != undefined) {
+            barrier = true;
+        }
+
+        if (barrier) {
+            let removingIndex = movements.findIndex(item => (item[0] === row+i && item[1] === col-i));
+            if (removingIndex != -1) movements.splice(removingIndex, 1);
+        } 
+    }
+
+    /* Cross movements row-i col-i */
+    barrier = false;
+    for(i=1; (row-i>=0 && col-i>=0); i++) {
+        if (!barrier && pieceArray[row-i][col-i] != undefined) {
+            barrier = true;
+        }
+
+        if (barrier) {
+            let removingIndex = movements.findIndex(item => (item[0] === row-i && item[1] === col-i));
+            if (removingIndex != -1) movements.splice(removingIndex, 1); 
+        } 
+    }
+
+    /* Cross movements row-i col+i */
+    barrier = false;
+    for(i=1; (row-i>=0 && col+i<8); i++) {
+        if (!barrier && pieceArray[row-i][col+i] != undefined) {
+            barrier = true;
+        }
+
+        if (barrier) {
+            let removingIndex = movements.findIndex(item => (item[0] === row-i && item[1] === col+i));
+            if (removingIndex != -1) movements.splice(removingIndex, 1);
+        } 
+    }
+
+    /* Horizontal vertical movements row+i col */
+    barrier = false;
+    for(i=1; row+i<8; i++) {
+        if (!barrier && pieceArray[row+i][col] != undefined) {
+            barrier = true;
+        }
+
+        if (barrier) {
+            let removingIndex = movements.findIndex(item => (item[0] === row+i && item[1] === col));
+            if (removingIndex != -1) movements.splice(removingIndex, 1);
+        } 
+    }
+
+    /* Horizontal vertical movements row-i col */
+    barrier = false;
+    for(i=1; row-i>=0; i++) {
+        if (!barrier && pieceArray[row-i][col] != undefined) {
+            barrier = true;
+        }
+
+        if (barrier) {
+            let removingIndex = movements.findIndex(item => (item[0] === row-i && item[1] === col));
+            if (removingIndex != -1) movements.splice(removingIndex, 1);
+        } 
+    }
+
+    /* Horizontal vertical movements row col+i */
+    barrier = false;
+    for(i=1; col+i<8; i++) {
+        if (!barrier && pieceArray[row][col+i] != undefined) {
+            barrier = true;
+        }
+
+        if (barrier) {
+            let removingIndex = movements.findIndex(item => (item[0] === row && item[1] === col+i));
+            if (removingIndex != -1) movements.splice(removingIndex, 1);
+        } 
+    }
+
+    /* Horizontal vertical movements row col-i */
+    barrier = false;
+    for(i=1; col-i>=0; i++) {
+        if (!barrier && pieceArray[row][col-i] != undefined) {
+            barrier = true;
+        }
+
+        if (barrier) {
+            let removingIndex = movements.findIndex(item => (item[0] === row && item[1] === col-i));
+            if (removingIndex != -1) movements.splice(removingIndex, 1);
+        } 
+    }
+
+    /* Zig zag movements */
+    let knightMoves = [[2,-1],[2,1],[-2,-1],[-2,1],[1,-2],[1,2],[-1,-2],[-1,2]];
+    knightMoves.forEach(move => {
+        removingIndex = movements.findIndex(item => (item[0] === row+move[0] && item[1] === col+move[1]));
+        if (removingIndex != -1 && pieceArray[row+move[0]][col+move[1]] != undefined) {
+            movements.splice(removingIndex, 1);
+        } 
+    });
+
+    return movements;
+}
+
 $('.piece').on('click', (e)=>{
-    console.log('clicked')
     resetCellsColor();
 
     let cord = e.target.id.split("-");
@@ -110,12 +219,18 @@ $('.piece').on('click', (e)=>{
     colorChangedCells.push([id,$(id).css('background-color')]);
     $(id).css('background-color','#cecc36');
 
-    let possition = pieceArray[row][col].movement();
-    possition.forEach(square => {
+    // let movements = pieceArray[row][col].movement();
+    let movements = getMovements(pieceArray[row][col]);
+    
+    movements.forEach(square => {
         id = `#cell-${square[0]}-${square[1]}`;
-        if (pieceArray[square[0]][square[1]] == undefined) {
-            colorChangedCells.push([id,$(id).css('background-color')]);
-            $(id).css('background-color','green');
-        }
+        colorChangedCells.push([id,$(id).css('background-color')]);
+        $(id).css('background-color','green');
+        // if (pieceArray[square[0]][square[1]] == undefined) {
+            
+        // }
     });
+    
+
+
 });

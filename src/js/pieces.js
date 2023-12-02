@@ -7,15 +7,15 @@ class King extends Piece {
         this.coordinates = coordinates
     }
     movement() {
-        console.log('King movement', this.coordinates)
-        let x = this.coordinates[0];
-        let y = this.coordinates[1];
+        let row = this.coordinates[0];
+        let col = this.coordinates[1];
         let possibleMovements = [];
+
         for(let i=-1; i<2; i++) {
             for(let j=-1; j<2; j++) {
-                if (x+i > 0 && x+i < 8 && y+j > 0 && y+j < 8) {
+                if (row+i >= 0 && row+i < 8 && col+j >= 0 && col+j < 8) {
                     if (i==0 && j==0) continue;
-                    possibleMovements.push([x+i, y+j]);
+                    possibleMovements.push([row+i, col+j]);
                 }
             }
         }
@@ -30,8 +30,41 @@ class Queen extends Piece {
         this.coordinates = coordinates
     }
     movement() {
-        console.log('Quen movement', this.coordinates)
-        return [[0,0],[0,1]];
+        let row = this.coordinates[0];
+        let col = this.coordinates[1];
+        let possibleMovements = [];
+
+        /* Cross movements */
+        let i;
+        for(i=-7; i<8; i++) {
+            for(let j=-7; j<8; j++) {
+                if (row+i >= 0 && row+i < 8 && col+j >= 0 && col+j < 8) {
+                    if ((i==0 && j==0) || (Math.abs(i) != Math.abs(j))) continue;
+                    possibleMovements.push([row+i, col+j]);
+                }
+            }
+        }
+
+        /* Horizontal vertical movements row+i col */
+        for(i=1; row+i<8; i++) {
+            possibleMovements.push([row+i, col])
+        }
+
+        /* Horizontal vertical movements row-i col */
+        for(i=1; row-i>=0; i++) {
+            possibleMovements.push([row-i, col])
+        }
+
+        /* Horizontal vertical movements row col+i */
+        for(i=1; col+i<8; i++) {
+            possibleMovements.push([row, col+i])
+        }
+
+        /* Horizontal vertical movements row col-i */
+        for(i=1; col-i>=0; i++) {
+            possibleMovements.push([row, col-i])
+        }
+        return possibleMovements;
     }
 }
 
@@ -42,8 +75,19 @@ class Bishop extends Piece {
         this.coordinates = coordinates
     }
     movement() {
-        console.log('Bishop movement', this.coordinates)
-        return [[0,0],[0,1]];
+        let row = this.coordinates[0];
+        let col = this.coordinates[1];
+
+        let possibleMovements = [];
+        for(let i=-7; i<8; i++) {
+            for(let j=-7; j<8; j++) {
+                if (row+i >= 0 && row+i < 8 && col+j >= 0 && col+j < 8) {
+                    if ((i==0 && j==0) || (Math.abs(i) != Math.abs(j))) continue;
+                    possibleMovements.push([row+i, col+j]);
+                }
+            }
+        }
+        return possibleMovements;
     }
 }
 
@@ -54,8 +98,16 @@ class Knight extends Piece {
         this.coordinates = coordinates
     }
     movement() {
-        console.log('Knight movement', this.coordinates)
-        return [[0,0],[0,1]];
+        let possibleMovements = [];
+        let row = this.coordinates[0];
+        let col = this.coordinates[1];
+        let knightMoves = [[2,-1],[2,1],[-2,-1],[-2,1],[1,-2],[1,2],[-1,-2],[-1,2]];
+        knightMoves.forEach(move => {
+            if (row+move[0]>=0 && row+move[0]<8 && col+move[1]>=0 && col+move[1]<8) {
+                possibleMovements.push([row+move[0],col+move[1]]);
+            }
+        });
+        return possibleMovements;
     }
 }
 
@@ -66,20 +118,59 @@ class Rook extends Piece {
         this.coordinates = coordinates
     }
     movement() {
-        console.log('Root movement', this.coordinates)
-        return [[0,0],[0,1]];
+        let row = this.coordinates[0];
+        let col = this.coordinates[1];
+
+        let possibleMovements = [];
+        /* Horizontal vertical movements row+i col */
+        let i;
+        for(i=1; row+i<8; i++) {
+            possibleMovements.push([row+i, col])
+        }
+
+        /* Horizontal vertical movements row-i col */
+        for(i=1; row-i>=0; i++) {
+            possibleMovements.push([row-i, col])
+        }
+
+        /* Horizontal vertical movements row col+i */
+        for(i=1; col+i<8; i++) {
+            possibleMovements.push([row, col+i])
+        }
+
+        /* Horizontal vertical movements row col-i */
+        for(i=1; col-i>=0; i++) {
+            possibleMovements.push([row, col-i])
+        }
+        return possibleMovements;
     }
 }
 
 class Pawn extends Piece {
     coordinates;
-    constructor(coordinates) {
+    color;
+    constructor(color, coordinates) {
         super();
+        this.color = color;
         this.coordinates = coordinates
     }
     movement() {
-        console.log('Pawn movement', this.coordinates)
-        return [[0,0],[0,1]];
+        let row = this.coordinates[0];
+        let col = this.coordinates[1];
+
+        let possibleMovements = [];
+        let defaultRow = 1;
+        
+        if (this.color === 'black') {
+            if (row+1<8) possibleMovements.push([row+1, col])
+            if (row == defaultRow) possibleMovements.push([row+2, col])
+        } else {
+            defaultRow = 6;
+            if (row-1>=0) possibleMovements.push([row-1, col])
+            if (row == defaultRow) possibleMovements.push([row-2, col])
+        } 
+
+        return possibleMovements;
     }
 }
 
@@ -193,7 +284,7 @@ class WhitePawn extends Pawn {
     unicode = '2659';
     color = 'white';
     coordinates;
-    firstMove = true;
+    // firstMove = true;
 
     constructor(coordinates) {
         super();
@@ -205,7 +296,7 @@ class BlackPawn extends Pawn {
     unicode = '265F';
     color = 'black';
     coordinates;
-    firstMove = true;
+    // firstMove = true;
 
     constructor(coordinates) {
         super();
