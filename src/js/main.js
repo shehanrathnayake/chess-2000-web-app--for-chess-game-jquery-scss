@@ -58,9 +58,9 @@ function reset() {
 
     let initialState = [
         [blackRook1, blackKnight1, blackBishop1, blackQueen, blackKing, blackBishop2, blackKnight2, blackRook2],
-        [blackPawn1, blackPawn2, blackPawn3, blackPawn4, blackPawn5, blackPawn6, blackPawn7, blackPawn8],
+        [blackPawn1, blackPawn2, blackPawn3, blackPawn4, , blackPawn6, blackPawn7, blackPawn8],
         [ , , , , , , ,],
-        [ , , , , , , ,],
+        [ , , blackPawn5, , , , ,],
         [ , , , , , , ,],
         [ , , , , , , ,],
         [whitePawn1, whitePawn2, whitePawn3, whitePawn4, whitePawn5, whitePawn6, whitePawn7, whitePawn8],
@@ -70,9 +70,8 @@ function reset() {
     pieceArray = initialState.slice();
     for (row = 0; row < 8; row++) {
         for (col = 0; col < 8; col++) {
-            
             if (pieceArray[row][col] != undefined) {
-                $(`#cell-${row}-${col}`).html(  `<div class="piece">
+                $(`#cell-${row}-${col}`).html(  `<div id=${row + '-' + col} class="piece">
                                                     ${String.fromCodePoint(parseInt(pieceArray[row][col].unicode, 16))}
                                                 </div>`);
             }
@@ -82,3 +81,41 @@ function reset() {
 
 reset();
 $('.piece').draggable();
+
+let colorChangedCells = [];
+
+function resetCellsColor() {
+    colorChangedCells.forEach(cell => {
+        $(cell[0]).css('background-color',cell[1]);
+    });
+    colorChangedCells = [];
+}
+
+$('body').on('click', (e)=>{
+    if (!e.target.classList.contains('piece')) {
+        resetCellsColor();
+    }
+    
+});
+
+$('.piece').on('click', (e)=>{
+    console.log('clicked')
+    resetCellsColor();
+
+    let cord = e.target.id.split("-");
+    let row = parseInt(cord[0]);
+    let col = parseInt(cord[1]);
+
+    let id = `#cell-${row}-${col}`;
+    colorChangedCells.push([id,$(id).css('background-color')]);
+    $(id).css('background-color','#cecc36');
+
+    let possition = pieceArray[row][col].movement();
+    possition.forEach(square => {
+        id = `#cell-${square[0]}-${square[1]}`;
+        if (pieceArray[square[0]][square[1]] == undefined) {
+            colorChangedCells.push([id,$(id).css('background-color')]);
+            $(id).css('background-color','green');
+        }
+    });
+});

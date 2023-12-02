@@ -1,60 +1,103 @@
 class Piece { }
 
 class King extends Piece {
+    coordinates;
+    constructor(coordinates) {
+        super();
+        this.coordinates = coordinates
+    }
     movement() {
-        console.log('King movement')
+        console.log('King movement', this.coordinates)
+        let x = this.coordinates[0];
+        let y = this.coordinates[1];
+        let possibleMovements = [];
+        for(let i=-1; i<2; i++) {
+            for(let j=-1; j<2; j++) {
+                if (x+i > 0 && x+i < 8 && y+j > 0 && y+j < 8) {
+                    if (i==0 && j==0) continue;
+                    possibleMovements.push([x+i, y+j]);
+                }
+            }
+        }
+        return possibleMovements;
     }
 }
 
 class Queen extends Piece {
+    coordinates;
+    constructor(coordinates) {
+        super();
+        this.coordinates = coordinates
+    }
     movement() {
-        console.log('Queen movement')
+        console.log('Quen movement', this.coordinates)
+        return [[0,0],[0,1]];
     }
 }
 
 class Bishop extends Piece {
+    coordinates;
+    constructor(coordinates) {
+        super();
+        this.coordinates = coordinates
+    }
     movement() {
-        console.log('Queen movement')
+        console.log('Bishop movement', this.coordinates)
+        return [[0,0],[0,1]];
     }
 }
 
 class Knight extends Piece {
+    coordinates;
+    constructor(coordinates) {
+        super();
+        this.coordinates = coordinates
+    }
     movement() {
-        console.log('Queen movement')
+        console.log('Knight movement', this.coordinates)
+        return [[0,0],[0,1]];
     }
 }
 
 class Rook extends Piece {
+    coordinates;
+    constructor(coordinates) {
+        super();
+        this.coordinates = coordinates
+    }
     movement() {
-        console.log('Queen movement')
+        console.log('Root movement', this.coordinates)
+        return [[0,0],[0,1]];
     }
 }
 
 class Pawn extends Piece {
+    coordinates;
+    constructor(coordinates) {
+        super();
+        this.coordinates = coordinates
+    }
     movement() {
-        console.log('Queen movement')
+        console.log('Pawn movement', this.coordinates)
+        return [[0,0],[0,1]];
     }
 }
 
 class WhiteKing extends King {
     unicode = '2654';
     color = 'white';
-    coordinates;
 
     constructor(coordinates) {
-        super();
-        this.coordinates = coordinates;
+        super(coordinates);
     }
 }
 
 class BlackKing extends King {
     unicode = '265A';
     color = 'black';
-    coordinates;
 
     constructor(coordinates) {
-        super();
-        this.coordinates = coordinates;
+        super(coordinates);
     }
 }
 

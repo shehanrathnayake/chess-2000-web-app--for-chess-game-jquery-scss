@@ -20,31 +20,6 @@ $squareLength: calc($chessBoardLength / 8);
     display: flex;
 }
 
-$colorState: true;
-@for $row from 0 to 8 {
-    @if ($row%2 == 0) {
-        $colorState: true;
-    }@else {
-        $colorState: false;
-    }
-    @for $col from 0 to 8 {
-        @if ($colorState == true) {
-            #{'#cell-' + $row + '-' + $col} {
-                background-color: white;
-            }
-        } @else {
-            #{'#cell-' + $row + '-' + $col} {
-                background-color: rgb(165, 101, 42);
-            }
-        }
-        @if ($colorState == true) {
-            $colorState: false;
-        } @else {
-            $colorState: true;
-        }
-    }
-}
-
 .piece {
     width: calc($squareLength - 20px);
     height: calc($squareLength - 20px);
