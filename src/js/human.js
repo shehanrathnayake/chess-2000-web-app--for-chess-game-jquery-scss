@@ -1,5 +1,0 @@
-class HumanPlayer {
-
-}
-
-export {HumanPlayer}

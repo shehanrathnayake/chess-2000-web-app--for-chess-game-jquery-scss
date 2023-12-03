@@ -1,7 +1,6 @@
 import $ from 'jquery';
 
 class UiController {
-
     colorChangedCells = [];
 
     resetDom() {
@@ -22,7 +21,8 @@ class UiController {
                 }
             }
         }
-        $('.piece').draggable();
+        this.resetCellColors();
+        $('.white').draggable();
     }
 
     #colorCells(cellId, color) {
@@ -30,7 +30,7 @@ class UiController {
         $(cellId).css('background-color',color);
     }
 
-    #resetCellColors() {
+    resetCellColors() {
         this.colorChangedCells.forEach(cell => {
             $(cell[0]).css('background-color',cell[1]);
         });
@@ -38,8 +38,7 @@ class UiController {
     }
 
     colorMovements(currentpossition, allMovements) {
-
-        this.#resetCellColors();
+        this.resetCellColors();
 
         let id = `#cell-${currentpossition[0]}-${currentpossition[1]}`;
         this.#colorCells(id, '#cecc36')

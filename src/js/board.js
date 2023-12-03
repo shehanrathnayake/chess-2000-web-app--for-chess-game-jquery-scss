@@ -4,6 +4,7 @@ import {UiController} from './ui.js';
 class Board {
     #uiController;
     #currentState;
+    #possibleMovements;
 
     constructor (uiControllable) {
         this.#uiController = (uiControllable === true) ? new UiController() : null;
@@ -15,10 +16,6 @@ class Board {
 
     disableUiControllability() {
         this.#uiController = null;
-    }
-
-    getCurrentState() {
-        return this.#currentState.slice();
     }
 
     initialize() {
@@ -76,137 +73,128 @@ class Board {
         }
     }
 
+    #removeUnnecessoryMovements(row, col, barrier) {
+        if (!barrier && this.#currentState[row][col] != undefined) {
+            barrier = true;
+            if (this.#currentState[row][col].color === 'black') return barrier;
+        }
+            
+        if (barrier) {
+            let removingIndex = this.#possibleMovements.findIndex(item => (item[0] === row && item[1] === col));
+            if (removingIndex != -1) this.#possibleMovements.splice(removingIndex, 1);
+        }
+        return barrier;
+    }
+
     getMovements(piece) {
-        let movements = piece.movements();
+        this.#possibleMovements = piece.movements();
     
         let row = piece.coordinates[0];
         let col = piece.coordinates[1];
     
-        
         /* Cross movements row+i col-i */
         let i;
         let barrier = false;
         let removingIndex;
         for(i=1; i<8; i++) {
             if (row+i > 7 || col+i > 7) break;
-    
-            if (!barrier && this.#currentState[row+i][col+i] != undefined) {
-                barrier = true;
-            }
-                
-            if (barrier) {
-                removingIndex = movements.findIndex(item => (item[0] === row+i && item[1] === col+i));
-                if (removingIndex != -1) movements.splice(removingIndex, 1);
-            } 
+            barrier = this.#removeUnnecessoryMovements(row+i, col+i, barrier);
         }
-    
+        
         /* Cross movements row+i col-i */
         barrier = false;
         for(i=1; (row+i<8 && col-i>=0); i++) {
-            if (!barrier && this.#currentState[row+i][col-i] != undefined) {
-                barrier = true;
-            }
-    
-            if (barrier) {
-                removingIndex = movements.findIndex(item => (item[0] === row+i && item[1] === col-i));
-                if (removingIndex != -1) movements.splice(removingIndex, 1);
-            } 
+            barrier = this.#removeUnnecessoryMovements(row+i, col-i, barrier);
         }
-    
+        
         /* Cross movements row-i col-i */
         barrier = false;
         for(i=1; (row-i>=0 && col-i>=0); i++) {
-            if (!barrier && this.#currentState[row-i][col-i] != undefined) {
-                barrier = true;
-            }
-    
-            if (barrier) {
-                removingIndex = movements.findIndex(item => (item[0] === row-i && item[1] === col-i));
-                if (removingIndex != -1) movements.splice(removingIndex, 1); 
-            } 
+            barrier = this.#removeUnnecessoryMovements(row-i, col-i, barrier);
         }
-    
+        
         /* Cross movements row-i col+i */
         barrier = false;
         for(i=1; (row-i>=0 && col+i<8); i++) {
-            if (!barrier && this.#currentState[row-i][col+i] != undefined) {
-                barrier = true;
-            }
-    
-            if (barrier) {
-                removingIndex = movements.findIndex(item => (item[0] === row-i && item[1] === col+i));
-                if (removingIndex != -1) movements.splice(removingIndex, 1);
-            } 
+            barrier = this.#removeUnnecessoryMovements(row-i, col+i, barrier);
         }
     
         /* Horizontal vertical movements row+i col */
         barrier = false;
         for(i=1; row+i<8; i++) {
-            if (!barrier && this.#currentState[row+i][col] != undefined) {
-                barrier = true;
-            }
-    
-            if (barrier) {
-                removingIndex = movements.findIndex(item => (item[0] === row+i && item[1] === col));
-                if (removingIndex != -1) movements.splice(removingIndex, 1);
-            } 
+            barrier = this.#removeUnnecessoryMovements(row+i, col, barrier);
         }
     
         /* Horizontal vertical movements row-i col */
         barrier = false;
         for(i=1; row-i>=0; i++) {
-            if (!barrier && this.#currentState[row-i][col] != undefined) {
-                barrier = true;
-            }
-    
-            if (barrier) {
-                removingIndex = movements.findIndex(item => (item[0] === row-i && item[1] === col));
-                if (removingIndex != -1) movements.splice(removingIndex, 1);
-            } 
+            barrier = this.#removeUnnecessoryMovements(row-i, col, barrier);
         }
     
         /* Horizontal vertical movements row col+i */
         barrier = false;
         for(i=1; col+i<8; i++) {
-            if (!barrier && this.#currentState[row][col+i] != undefined) {
-                barrier = true;
-            }
-    
-            if (barrier) {
-                removingIndex = movements.findIndex(item => (item[0] === row && item[1] === col+i));
-                if (removingIndex != -1) movements.splice(removingIndex, 1);
-            } 
+            barrier = this.#removeUnnecessoryMovements(row, col+i, barrier);
         }
     
         /* Horizontal vertical movements row col-i */
         barrier = false;
         for(i=1; col-i>=0; i++) {
-            if (!barrier && this.#currentState[row][col-i] != undefined) {
-                barrier = true;
-            }
-    
-            if (barrier) {
-                removingIndex = movements.findIndex(item => (item[0] === row && item[1] === col-i));
-                if (removingIndex != -1) movements.splice(removingIndex, 1);
-            } 
+            barrier = this.#removeUnnecessoryMovements(row, col-i, barrier);
         }
     
         /* Zig zag movements */
         let knightMoves = [[2,-1],[2,1],[-2,-1],[-2,1],[1,-2],[1,2],[-1,-2],[-1,2]];
         knightMoves.forEach(move => {
-            removingIndex = movements.findIndex(item => (item[0] === row+move[0] && item[1] === col+move[1]));
+            let removingIndex = this.#possibleMovements.findIndex(item => (item[0] === row+move[0] && item[1] === col+move[1]));
             if (removingIndex != -1 && this.#currentState[row+move[0]][col+move[1]] != undefined) {
-                movements.splice(removingIndex, 1);
+                this.#possibleMovements.splice(removingIndex, 1);
             } 
         });
-    
-        return movements;
     }
 
-    suggestMovements(humanMove) {
-        let movingPiece = this.#currentState[humanMove[0][0]][humanMove[0][1]];
-        let possibleMovements = this.getMovements(movingPiece);
-        this.#uiController.colorMovements(movingPiece.coordinates ,possibleMovements);
+    resetCellColors() {
+        if (this.#uiController) {
+            if (this.#possibleMovements) this.#possibleMovements.length = 0;
+            this.#uiController.resetCellColors();
+        }
+    }
+
+    suggestPossibleMovements(humanMove) {
+        let movingPiece = this.#currentState[humanMove[0]][humanMove[1]];
+        this.getMovements(movingPiece);
+        if (this.#uiController) {
+            this.#uiController.colorMovements(movingPiece.coordinates ,this.#possibleMovements);
+        }
+        
+    }
+
+    resetToCurrentState() {
+        if (this.#uiController) {
+            this.#uiController.updateState(this.#currentState);
+        }
+    }
+
+    move(move) {
+        let currentPossition = move[0];
+        let nextPossition = move[1]
+
+        let continueFlow = false;
+        this.#possibleMovements.forEach(move => {
+            if (move[0] === nextPossition[0] && move[1] === nextPossition[1]) {
+                continueFlow = true;
+                // break;
+            }
+        });
+        if (continueFlow) {
+            let movingPiece = this.#currentState[currentPossition[0]][currentPossition[1]];
+            movingPiece.coordinates = nextPossition.slice()
+            this.#currentState[currentPossition[0]][currentPossition[1]] = undefined;
+            this.#currentState[nextPossition[0]][nextPossition[1]] = movingPiece
+        } 
+        if (this.#uiController) {
+            this.#uiController.updateState(this.#currentState);
+        }
     }
 }
 

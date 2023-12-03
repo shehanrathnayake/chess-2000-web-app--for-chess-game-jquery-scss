@@ -1,6 +1,10 @@
 $chessBoardLength : 600px;
 $squareLength: calc($chessBoardLength / 8);
 
+body {
+    height: 100vh;
+}
+
 #chess-board {
     width: $chessBoardLength;
     height: $chessBoardLength;
