@@ -1,7 +1,7 @@
 {
-  "name": "chess-2000",
+  "name": "chess-player",
   "version": "0.1.0",
-  "description": "chess-2000-game-with-jquery-and-mcts-algorithm",
+  "description": "chess-player-game-with-jquery-and-mcts-algorithm",
   "source": "src/index.html",
   "scripts": {
     "start": "parcel --no-cache",

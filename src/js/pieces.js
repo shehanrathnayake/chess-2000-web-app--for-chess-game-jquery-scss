@@ -11,7 +11,7 @@ class King extends Piece {
         this.coordinates = coordinates;
         this.unicode = (color === 'black') ? '265A' : '2654';
     }
-    movement() {
+    movements() {
         let row = this.coordinates[0];
         let col = this.coordinates[1];
         let possibleMovements = [];
@@ -39,7 +39,7 @@ class Queen extends Piece {
         this.coordinates = coordinates;
         this.unicode = (color === 'black') ? '265B' : '2655';
     }
-    movement() {
+    movements() {
         let row = this.coordinates[0];
         let col = this.coordinates[1];
         let possibleMovements = [];
@@ -89,7 +89,7 @@ class Bishop extends Piece {
         this.coordinates = coordinates;
         this.unicode = (color === 'black') ? '265D' : '2657';
     }
-    movement() {
+    movements() {
         let row = this.coordinates[0];
         let col = this.coordinates[1];
 
@@ -117,7 +117,7 @@ class Knight extends Piece {
         this.coordinates = coordinates;
         this.unicode = (color === 'black') ? '265E' : '2658';
     }
-    movement() {
+    movements() {
         let possibleMovements = [];
         let row = this.coordinates[0];
         let col = this.coordinates[1];
@@ -142,7 +142,7 @@ class Rook extends Piece {
         this.coordinates = coordinates;
         this.unicode = (color === 'black') ? '265C' : '2656';
     }
-    movement() {
+    movements() {
         let row = this.coordinates[0];
         let col = this.coordinates[1];
 
@@ -162,7 +162,7 @@ class Rook extends Piece {
         for(i=1; col+i<8; i++) {
             possibleMovements.push([row, col+i])
         }
-
+        
         /* Horizontal vertical movements row col-i */
         for(i=1; col-i>=0; i++) {
             possibleMovements.push([row, col-i])
@@ -181,7 +181,7 @@ class Pawn extends Piece {
         this.coordinates = coordinates
         this.unicode =  (color === 'black') ? '265F' : '2659';
     }
-    movement() {
+    movements() {
         let row = this.coordinates[0];
         let col = this.coordinates[1];
 
@@ -196,14 +196,10 @@ class Pawn extends Piece {
             if (row-1>=0) possibleMovements.push([row-1, col])
             if (row == defaultRow) possibleMovements.push([row-2, col])
         } 
-
         return possibleMovements;
     }
 }
-
 export {Piece, King, Queen, Bishop, Knight, Rook, Pawn};
-export {BlackKing, BlackQueen, BlackBishop, BlackKnight, BlackRook, BlackPawn};
-export {WhiteKing, WhiteQueen, WhiteBishop, WhiteKnight, WhiteRook, WhitePawn};
 
     /*
     White
