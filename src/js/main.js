@@ -2,46 +2,47 @@ import $ from 'jquery';
 import * as pieces from './pieces.js'
 
 let pieceArray;
+let selectedPiece;
 
 function reset() {
 
     // Creating black pieces
-    let blackKing = new pieces.BlackKing([0,4]);
-    let blackQueen = new pieces.BlackQueen([0,3]);
-    let blackBishop1 = new pieces.BlackBishop([0,2]);
-    let blackBishop2 = new pieces.BlackBishop([0,5]);
-    let blackKnight1 = new pieces.BlackKnight([0,1]);
-    let blackKnight2 = new pieces.BlackKnight([0,6]);
-    let blackRook1 = new pieces.BlackRook([0,0]);
-    let blackRook2 = new pieces.BlackRook([0,7]);
+    let blackKing = new pieces.King('black',[0,4]);
+    let blackQueen = new pieces.Queen('black',[0,3]);
+    let blackBishop1 = new pieces.Bishop('black',[0,2]);
+    let blackBishop2 = new pieces.Bishop('black',[0,5]);
+    let blackKnight1 = new pieces.Knight('black',[0,1]);
+    let blackKnight2 = new pieces.Knight('black',[0,6]);
+    let blackRook1 = new pieces.Rook('black',[0,0]);
+    let blackRook2 = new pieces.Rook('black',[0,7]);
 
-    let blackPawn1 = new pieces.BlackPawn([1,0]);
-    let blackPawn2 = new pieces.BlackPawn([1,1]);
-    let blackPawn3 = new pieces.BlackPawn([1,2]);
-    let blackPawn4 = new pieces.BlackPawn([1,3]);
-    let blackPawn5 = new pieces.BlackPawn([1,4]);
-    let blackPawn6 = new pieces.BlackPawn([1,5]);
-    let blackPawn7 = new pieces.BlackPawn([1,6]);
-    let blackPawn8 = new pieces.BlackPawn([1,7]);
+    let blackPawn1 = new pieces.Pawn('black',[1,0]);
+    let blackPawn2 = new pieces.Pawn('black',[1,1]);
+    let blackPawn3 = new pieces.Pawn('black',[1,2]);
+    let blackPawn4 = new pieces.Pawn('black',[1,3]);
+    let blackPawn5 = new pieces.Pawn('black',[1,4]);
+    let blackPawn6 = new pieces.Pawn('black',[1,5]);
+    let blackPawn7 = new pieces.Pawn('black',[1,6]);
+    let blackPawn8 = new pieces.Pawn('black',[1,7]);
 
     // Creating white pieces
-    let whiteKing = new pieces.WhiteKing([7,4]);
-    let whiteQueen = new pieces.WhiteQueen([7,3]);
-    let whiteBishop1 = new pieces.WhiteBishop([7,2]);
-    let whiteBishop2 = new pieces.WhiteBishop([7,5]);
-    let whiteKnight1 = new pieces.WhiteKnight([7,1]);
-    let whiteKnight2 = new pieces.WhiteKnight([7,6]);
-    let whiteRook1 = new pieces.WhiteRook([7,0]);
-    let whiteRook2 = new pieces.WhiteRook([7,7]);
+    let whiteKing = new pieces.King('white',[7,4]);
+    let whiteQueen = new pieces.Queen('white',[7,3]);
+    let whiteBishop1 = new pieces.Bishop('white',[7,2]);
+    let whiteBishop2 = new pieces.Bishop('white',[7,5]);
+    let whiteKnight1 = new pieces.Knight('white',[7,1]);
+    let whiteKnight2 = new pieces.Knight('white',[7,6]);
+    let whiteRook1 = new pieces.Rook('white',[7,0]);
+    let whiteRook2 = new pieces.Rook('white',[7,7]);
 
-    let whitePawn1 = new pieces.WhitePawn([6,0]);
-    let whitePawn2 = new pieces.WhitePawn([6,1]);
-    let whitePawn3 = new pieces.WhitePawn([6,2]);
-    let whitePawn4 = new pieces.WhitePawn([6,3]);
-    let whitePawn5 = new pieces.WhitePawn([6,4]);
-    let whitePawn6 = new pieces.WhitePawn([6,5]);
-    let whitePawn7 = new pieces.WhitePawn([6,6]);
-    let whitePawn8 = new pieces.WhitePawn([6,7]);
+    let whitePawn1 = new pieces.Pawn('white',[6,0]);
+    let whitePawn2 = new pieces.Pawn('white',[6,1]);
+    let whitePawn3 = new pieces.Pawn('white',[6,2]);
+    let whitePawn4 = new pieces.Pawn('white',[6,3]);
+    let whitePawn5 = new pieces.Pawn('white',[6,4]);
+    let whitePawn6 = new pieces.Pawn('white',[6,5]);
+    let whitePawn7 = new pieces.Pawn('white',[6,6]);
+    let whitePawn8 = new pieces.Pawn('white',[6,7]);
 
     let initialState = [
         [blackRook1, blackKnight1, blackBishop1, blackQueen, blackKing, blackBishop2, blackKnight2, blackRook2],
@@ -68,6 +69,40 @@ function reset() {
 
 reset();
 $('.piece').draggable();
+$('.c').droppable({
+    drop: function( event, ui ) {
+        // $(this).css( "background-color",'red' );
+        let cord = event.target.id.split("-");
+        console.log('cord: ', cord)
+        let row = parseInt(cord[1]);
+        let col = parseInt(cord[2]);
+        console.log('row: ', row, 'col: ', col)
+
+        pieceArray[selectedPiece.coordinates[0]][selectedPiece.coordinates[1]] = undefined;
+        console.log('pieceArray first: ', pieceArray)
+        let id = `${selectedPiece.coordinates[0]}-${selectedPiece.coordinates[1]}`;
+        console.log('id: ', id)
+        $(id).remove();
+
+        selectedPiece.coordinates = [row,col];
+        console.log('selectedPiece coordinates: ',selectedPiece)
+        pieceArray[row][col] = selectedPiece
+
+        console.log('pieceArray second: ', pieceArray)
+
+        id = `#cell-${row}-${col}`;
+        $(id).html( `<div id=${row + '-' + col} class="piece">
+                        ${String.fromCodePoint(parseInt(selectedPiece.unicode, 16))}
+                    </div>`);
+
+
+        // .addClass( "ui-state-highlight" ).css( "background-color",'red' );
+        // .find( "p" )
+
+
+       $('.piece').draggable();   
+    }
+});
 
 let colorChangedCells = [];
 
@@ -91,6 +126,7 @@ function getMovements(piece) {
     let row = piece.coordinates[0];
     let col = piece.coordinates[1];
 
+    /* Cross movements row+i col-i */
     let barrier = false;
     for(let i=1; i<8; i++) {
         if (row+i > 7 || col+i > 7) break;
@@ -210,7 +246,7 @@ function getMovements(piece) {
 
 $('.piece').on('click', (e)=>{
     resetCellsColor();
-
+    
     let cord = e.target.id.split("-");
     let row = parseInt(cord[0]);
     let col = parseInt(cord[1]);
@@ -219,18 +255,12 @@ $('.piece').on('click', (e)=>{
     colorChangedCells.push([id,$(id).css('background-color')]);
     $(id).css('background-color','#cecc36');
 
-    // let movements = pieceArray[row][col].movement();
-    let movements = getMovements(pieceArray[row][col]);
+    selectedPiece = pieceArray[row][col];
+    let movements = getMovements(selectedPiece);
     
     movements.forEach(square => {
         id = `#cell-${square[0]}-${square[1]}`;
         colorChangedCells.push([id,$(id).css('background-color')]);
         $(id).css('background-color','green');
-        // if (pieceArray[square[0]][square[1]] == undefined) {
-            
-        // }
     });
-    
-
-
 });

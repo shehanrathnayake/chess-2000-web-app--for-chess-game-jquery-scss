@@ -1,10 +1,15 @@
 class Piece { }
 
 class King extends Piece {
+    color;
     coordinates;
-    constructor(coordinates) {
+    unicode;
+
+    constructor(color, coordinates) {
         super();
-        this.coordinates = coordinates
+        this.color = color;
+        this.coordinates = coordinates;
+        this.unicode = (color === 'black') ? '265A' : '2654';
     }
     movement() {
         let row = this.coordinates[0];
@@ -24,10 +29,15 @@ class King extends Piece {
 }
 
 class Queen extends Piece {
+    color;
     coordinates;
-    constructor(coordinates) {
+    unicode;
+
+    constructor(color, coordinates) {
         super();
-        this.coordinates = coordinates
+        this.color = color;
+        this.coordinates = coordinates;
+        this.unicode = (color === 'black') ? '265B' : '2655';
     }
     movement() {
         let row = this.coordinates[0];
@@ -69,10 +79,15 @@ class Queen extends Piece {
 }
 
 class Bishop extends Piece {
+    color;
     coordinates;
-    constructor(coordinates) {
+    unicode;
+
+    constructor(color, coordinates) {
         super();
-        this.coordinates = coordinates
+        this.color = color;
+        this.coordinates = coordinates;
+        this.unicode = (color === 'black') ? '265D' : '2657';
     }
     movement() {
         let row = this.coordinates[0];
@@ -92,10 +107,15 @@ class Bishop extends Piece {
 }
 
 class Knight extends Piece {
+    color;
     coordinates;
-    constructor(coordinates) {
+    unicode;
+
+    constructor(color, coordinates) {
         super();
-        this.coordinates = coordinates
+        this.color = color;
+        this.coordinates = coordinates;
+        this.unicode = (color === 'black') ? '265E' : '2658';
     }
     movement() {
         let possibleMovements = [];
@@ -112,10 +132,15 @@ class Knight extends Piece {
 }
 
 class Rook extends Piece {
+    color;
     coordinates;
-    constructor(coordinates) {
+    unicode;
+
+    constructor(color, coordinates) {
         super();
-        this.coordinates = coordinates
+        this.color = color;
+        this.coordinates = coordinates;
+        this.unicode = (color === 'black') ? '265C' : '2656';
     }
     movement() {
         let row = this.coordinates[0];
@@ -147,12 +172,14 @@ class Rook extends Piece {
 }
 
 class Pawn extends Piece {
-    coordinates;
     color;
+    coordinates;
+    unicode;
     constructor(color, coordinates) {
         super();
         this.color = color;
         this.coordinates = coordinates
+        this.unicode =  (color === 'black') ? '265F' : '2659';
     }
     movement() {
         let row = this.coordinates[0];
@@ -160,7 +187,7 @@ class Pawn extends Piece {
 
         let possibleMovements = [];
         let defaultRow = 1;
-        
+
         if (this.color === 'black') {
             if (row+1<8) possibleMovements.push([row+1, col])
             if (row == defaultRow) possibleMovements.push([row+2, col])
@@ -171,136 +198,6 @@ class Pawn extends Piece {
         } 
 
         return possibleMovements;
-    }
-}
-
-class WhiteKing extends King {
-    unicode = '2654';
-    color = 'white';
-
-    constructor(coordinates) {
-        super(coordinates);
-    }
-}
-
-class BlackKing extends King {
-    unicode = '265A';
-    color = 'black';
-
-    constructor(coordinates) {
-        super(coordinates);
-    }
-}
-
-class WhiteQueen extends Queen {
-    unicode = '2655';
-    color = 'white';
-    coordinates;
-
-    constructor(coordinates) {
-        super();
-        this.coordinates = coordinates;
-    }
-}
-
-class BlackQueen extends Queen {
-    unicode = '265B';
-    color = 'black';
-    coordinates;
-
-    constructor(coordinates) {
-        super();
-        this.coordinates = coordinates;
-    }
-}
-
-class WhiteBishop extends Bishop {
-    unicode = '2657';
-    color = 'white';
-    coordinates;
-
-    constructor(coordinates) {
-        super();
-        this.coordinates = coordinates;
-    }
-}
-
-class BlackBishop extends Bishop {
-    unicode = '265D';
-    color = 'black';
-    coordinates;
-
-    constructor(coordinates) {
-        super();
-        this.coordinates = coordinates;
-    }
-}
-
-class WhiteKnight extends Knight {
-    unicode = '2658';
-    color = 'white';
-    coordinates;
-
-    constructor(coordinates) {
-        super();
-        this.coordinates = coordinates;
-    }
-}
-
-class BlackKnight extends Knight {
-    unicode = '265E';
-    color = 'black';
-    coordinates;
-
-    constructor(coordinates) {
-        super();
-        this.coordinates = coordinates;
-    }
-}
-
-class WhiteRook extends Rook {
-    unicode = '2656';
-    color = 'white';
-    coordinates;
-
-    constructor(coordinates) {
-        super();
-        this.coordinates = coordinates;
-    }
-}
-
-class BlackRook extends Rook {
-    unicode = '265C';
-    color = 'black';
-    coordinates;
-
-    constructor(coordinates) {
-        super();
-        this.coordinates = coordinates;
-    }
-}
-
-class WhitePawn extends Pawn {
-    unicode = '2659';
-    color = 'white';
-    coordinates;
-    // firstMove = true;
-
-    constructor(coordinates) {
-        super();
-        this.coordinates = coordinates;
-    }
-}
-
-class BlackPawn extends Pawn {
-    unicode = '265F';
-    color = 'black';
-    coordinates;
-    // firstMove = true;
-
-    constructor(coordinates) {
-        super();
-        this.coordinates = coordinates;
     }
 }
 
