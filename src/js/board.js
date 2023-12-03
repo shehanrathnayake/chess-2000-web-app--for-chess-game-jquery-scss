@@ -5,9 +5,14 @@ class Board {
     #uiController;
     #currentState;
     #possibleMovements;
+    #aiDeadPieces;
+    #humanDeadPieces;
+    #aiKingCheckState;
+    #humanKingCheckState;
 
     constructor (uiControllable) {
         this.#uiController = (uiControllable === true) ? new UiController() : null;
+        this.initialize();
     }
 
     enableUiCotrollability() {
@@ -16,6 +21,10 @@ class Board {
 
     disableUiControllability() {
         this.#uiController = null;
+    }
+
+    setCurrentState(newCurrentState) {
+        if (!this.#uiController && this.#currentState) this.#currentState = newCurrentState;
     }
 
     initialize() {
@@ -68,6 +77,11 @@ class Board {
             [whiteRook1, whiteKnight1, whiteBishop1, whiteQueen, whiteKing, whiteBishop2, whiteKnight2, whiteRook2]
         ];
 
+        this.#aiDeadPieces = [];
+        this.#humanDeadPieces = [];
+        this.#aiKingCheckState = false;
+        this.#humanKingCheckState = false;
+
         if (this.#uiController) {
             this.#uiController.updateState(this.#currentState.slice())
         }
@@ -76,9 +90,9 @@ class Board {
     #removeUnnecessoryMovements(row, col, barrier) {
         if (!barrier && this.#currentState[row][col] != undefined) {
             barrier = true;
-            if (this.#currentState[row][col].color === 'black') return barrier;
+            if (this.#currentState[row][col].color === 'black' && this.#currentState[row][col].unicode !== '265A') return barrier;
         }
-            
+
         if (barrier) {
             let removingIndex = this.#possibleMovements.findIndex(item => (item[0] === row && item[1] === col));
             if (removingIndex != -1) this.#possibleMovements.splice(removingIndex, 1);
@@ -95,7 +109,6 @@ class Board {
         /* Cross movements row+i col-i */
         let i;
         let barrier = false;
-        let removingIndex;
         for(i=1; i<8; i++) {
             if (row+i > 7 || col+i > 7) break;
             barrier = this.#removeUnnecessoryMovements(row+i, col+i, barrier);
@@ -151,6 +164,40 @@ class Board {
                 this.#possibleMovements.splice(removingIndex, 1);
             } 
         });
+
+        /* Correcting Pawn moves */
+        if (piece.unicode === '2659') {
+            if (!this.#currentState[row-1][col-1] || this.#currentState[row-1][col-1].color !== 'black' || this.#currentState[row-1][col-1].unicode === '265A') {
+                this.#correctMoves(row-1, col-1);
+            }
+
+            if (!this.#currentState[row-1][col+1] || this.#currentState[row-1][col+1].color !== 'black' || this.#currentState[row-1][col+1].unicode === '265A') {
+                this.#correctMoves(row-1, col+1);
+            }
+
+            if (this.#currentState[row-1][col]) {
+                this.#correctMoves(row-1, col);
+            }
+        } else if (piece.unicode === '265F') {
+            if (!this.#currentState[row+1][col-1] || this.#currentState[row+1][col-1].color !== 'white' || this.#currentState[row+1][col-1].unicode === '2654') {
+                this.#correctMoves(row+1, col-1); 
+            }
+
+            if (!this.#currentState[row+1][col+1] || this.#currentState[row+1][col+1].color !== 'white' || this.#currentState[row+1][col+1].unicode === '2654') {
+                this.#correctMoves(row+1, col+1);
+            }
+
+            if (this.#currentState[row+1][col]) {
+                this.#correctMoves(row+1, col);
+            }
+        }
+    }
+
+    #correctMoves(row, col) {
+        let removingIndex = this.#possibleMovements.findIndex(item => (item[0] === row && item[1] === col));
+        if (removingIndex != -1) {
+            this.#possibleMovements.splice(removingIndex, 1);
+        }
     }
 
     resetCellColors() {
@@ -180,17 +227,30 @@ class Board {
         let nextPossition = move[1]
 
         let continueFlow = false;
-        this.#possibleMovements.forEach(move => {
-            if (move[0] === nextPossition[0] && move[1] === nextPossition[1]) {
+        this.#possibleMovements.forEach(nextMove => {
+            if (nextMove[0] === nextPossition[0] && nextMove[1] === nextPossition[1]) {
                 continueFlow = true;
                 // break;
             }
         });
         if (continueFlow) {
             let movingPiece = this.#currentState[currentPossition[0]][currentPossition[1]];
-            movingPiece.coordinates = nextPossition.slice()
+            movingPiece.coordinates = nextPossition;
             this.#currentState[currentPossition[0]][currentPossition[1]] = undefined;
-            this.#currentState[nextPossition[0]][nextPossition[1]] = movingPiece
+
+            if (this.#currentState[nextPossition[0]][nextPossition[1]]) {
+                console.log(this.#currentState[nextPossition[0]][nextPossition[1]])
+                let deadPiece = this.#currentState[nextPossition[0]][nextPossition[1]];
+                if (deadPiece.color === 'black') {
+                    this.#aiDeadPieces.push(deadPiece);
+                    if (this.#uiController) this.#uiController.updateDeadPieces(deadPiece, 'ai');
+
+                } else {
+                    this.#humanDeadPieces.push(deadPiece);
+                    if (this.#uiController) this.#uiController.updateDeadPieces(deadPiece, 'human');
+                }
+            } 
+            this.#currentState[nextPossition[0]][nextPossition[1]] = movingPiece;
         } 
         if (this.#uiController) {
             this.#uiController.updateState(this.#currentState);

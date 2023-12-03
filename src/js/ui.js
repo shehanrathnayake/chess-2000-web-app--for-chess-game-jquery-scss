@@ -14,7 +14,7 @@ class UiController {
             for (let col = 0; col < 8; col++) {
                 if (currentState[row][col] != undefined) {
                     $(`#cell-${row}-${col}`).html(`  
-                        <div id=${row + '-' + col} class="piece ${(currentState[row][col].color === 'white') ? 'white' : 'black'}">
+                        <div id="${row + '-' + col}" class="piece ${(currentState[row][col].color === 'white') ? 'white' : 'black'}">
                             ${String.fromCodePoint(parseInt(currentState[row][col].unicode, 16))}
                         </div>
                     `);
@@ -23,6 +23,15 @@ class UiController {
         }
         this.resetCellColors();
         $('.white').draggable();
+    }
+
+    updateDeadPieces(deadPiece, pre) {
+        console.log('updatedDeadPieces: ', deadPiece, pre)
+        $(`#${pre}-dead-pieces`).append(`  
+                        <li class="dead d-flex justify-content-center align-items-center">
+                            ${String.fromCodePoint(parseInt(deadPiece.unicode, 16))}
+                        </li>
+                    `);
     }
 
     #colorCells(cellId, color) {

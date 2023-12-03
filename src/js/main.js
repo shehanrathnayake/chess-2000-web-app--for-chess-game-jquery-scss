@@ -6,7 +6,6 @@ let mainBoard;
 $('#start').on('click', ()=>{
     if (mainBoard) mainBoard.resetCellColors();
     mainBoard = new Board(true);
-    mainBoard.initialize();
     gamePlay();
 })
 

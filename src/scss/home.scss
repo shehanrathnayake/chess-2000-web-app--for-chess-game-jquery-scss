@@ -17,7 +17,6 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 4rem;
 }
 
 .r {
@@ -32,5 +31,11 @@ body {
     justify-content: center;
     align-items: center;
     cursor: move;
-    position: absolute;
+}
+
+.dead {
+    width: calc($squareLength - 20px);
+    height: calc($squareLength - 20px);
+    font-size: 4rem;
+    list-style: none;
 }

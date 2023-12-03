@@ -162,7 +162,7 @@ class Rook extends Piece {
         for(i=1; col+i<8; i++) {
             possibleMovements.push([row, col+i])
         }
-        
+
         /* Horizontal vertical movements row col-i */
         for(i=1; col-i>=0; i++) {
             possibleMovements.push([row, col-i])
@@ -189,12 +189,17 @@ class Pawn extends Piece {
         let defaultRow = 1;
 
         if (this.color === 'black') {
-            if (row+1<8) possibleMovements.push([row+1, col])
-            if (row == defaultRow) possibleMovements.push([row+2, col])
+            if (row+1<8) possibleMovements.push([row+1, col]);
+            if (row == defaultRow) possibleMovements.push([row+2, col]);
+            if (row+1<8 && col-1>=0) possibleMovements.push([row+1, col-1]);
+            if (row+1<8 && col+1<8) possibleMovements.push([row+1, col+1]);
+
         } else {
             defaultRow = 6;
-            if (row-1>=0) possibleMovements.push([row-1, col])
-            if (row == defaultRow) possibleMovements.push([row-2, col])
+            if (row-1>=0) possibleMovements.push([row-1, col]);
+            if (row == defaultRow) possibleMovements.push([row-2, col]);
+            if (row-1>=0 && col-1>=0) possibleMovements.push([row-1, col-1]);
+            if (row+1>=0 && col+1<8) possibleMovements.push([row-1, col+1]);
         } 
         return possibleMovements;
     }
